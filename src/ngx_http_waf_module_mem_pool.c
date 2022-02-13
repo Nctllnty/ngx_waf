@@ -17,13 +17,15 @@ ngx_int_t mem_pool_init(mem_pool_t* pool, mem_pool_flag_e flag, void* native_poo
 
 void* mem_pool_calloc(mem_pool_t* pool, ngx_uint_t byte_size) {
     ngx_uint_t* ptr = NULL;
-    ngx_uint_t _byte_size = byte_size + sizeof(ngx_uint_t);
+    // ngx_uint_t _byte_size = byte_size + sizeof(ngx_uint_t);
 
-    if (ngx_http_waf_check_flag(pool->flag, MEM_POOL_FLAG_FIXED)) {
-        if (pool->used + _byte_size > pool->capacity) {
-            return NULL;
-        }
-    }
+    ngx_uint_t _byte_size = byte_size;
+
+    // if (ngx_http_waf_check_flag(pool->flag, MEM_POOL_FLAG_FIXED)) {
+    //     if (pool->used + _byte_size > pool->capacity) {
+    //         return NULL;
+    //     }
+    // }
 
     if (ngx_http_waf_check_flag(pool->flag, MEM_POOL_FLAG_STDC)) {
         ptr = calloc(sizeof(uint8_t), _byte_size);
@@ -38,14 +40,17 @@ void* mem_pool_calloc(mem_pool_t* pool, ngx_uint_t byte_size) {
         abort();
     }
 
-    pool->used += _byte_size;
-    ptr[0] = _byte_size;
-    return ptr + 1;
+    // pool->used += _byte_size;
+    // ptr[0] = _byte_size;
+    // return ptr + 1;
+    return ptr;
 }
 
 void mem_pool_free(mem_pool_t* pool, void* ptr) {
-    ngx_uint_t* _ptr = (ngx_uint_t*)(ptr) - 1;
-    ngx_uint_t _byte_size = _ptr[0];
+    // ngx_uint_t* _ptr = (ngx_uint_t*)(ptr) - 1;
+    // ngx_uint_t _byte_size = _ptr[0];
+
+    void* _ptr = ptr;
 
     if (ngx_http_waf_check_flag(pool->flag, MEM_POOL_FLAG_STDC)) {
         free(_ptr);
@@ -60,5 +65,5 @@ void mem_pool_free(mem_pool_t* pool, void* ptr) {
         abort();
     }
 
-    pool->used -= _byte_size;
+    // pool->used -= _byte_size;
 }
