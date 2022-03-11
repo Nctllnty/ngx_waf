@@ -259,6 +259,11 @@ ngx_int_t ngx_http_waf_captcha_test(ngx_http_request_t* r) {
 }
 
 
+ngx_int_t ngx_http_waf_captcha_verify_cookies(ngx_http_request_t* r) {
+    return _verify_cookies(r);
+}
+
+
 ngx_int_t ngx_http_waf_captcha_inc_fails(ngx_http_request_t* r) {
     ngx_http_waf_dp_func_start(r);
 

@@ -111,6 +111,12 @@ ngx_int_t ngx_http_waf_perform_action_at_access_end(ngx_http_request_t* r) {
 
     ngx_http_waf_dp(r, "looking action chain");
 
+    if (ctx->action_chain != NULL
+        &&ngx_http_waf_check_flag(ctx->action_chain->flag, ACTION_FLAG_CAPTCHA)
+        && ngx_http_waf_captcha_verify_cookies(r) == NGX_HTTP_WAF_SUCCESS) {
+        return NGX_DECLINED;
+    }
+
     DL_FOREACH_SAFE(ctx->action_chain, elt, tmp) {
         if (ngx_http_waf_check_flag(elt->flag, ACTION_FLAG_DECLINE)) {
             ngx_http_waf_dp(r, "action is decline");
